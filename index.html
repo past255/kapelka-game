@@ -3,68 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Капелька лови: Режимы</title>
+    <title>Капелька лови</title>
     <style>
+        :root {
+            --blue: #3498db;
+            --red: #e74c3c;
+            --orange: #e67e22;
+            --yellow: #f1c40f;
+        }
         body { 
             margin: 0; overflow: hidden; background: #1a2a3a; 
-            font-family: 'Segoe UI', sans-serif; touch-action: none; 
-            user-select: none; -webkit-user-select: none;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            touch-action: none; user-select: none; -webkit-user-select: none;
+            color: white;
         }
-        canvas { display: block; }
+        canvas { display: block; position: absolute; top: 0; left: 0; }
+        
         #ui {
-            position: absolute; top: 10px; left: 0; width: 100%;
-            z-index: 10; color: white; text-align: center; pointer-events: none;
+            position: absolute; top: 15px; left: 0; width: 100%;
+            z-index: 10; text-align: center; pointer-events: none;
         }
         #progress-container {
-            width: 80%; height: 8px; background: rgba(255,255,255,0.2);
-            margin: 5px auto; border-radius: 4px; overflow: hidden;
+            width: 70%; height: 6px; background: rgba(255,255,255,0.1);
+            margin: 5px auto; border-radius: 10px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        #progress-bar { width: 0%; height: 100%; background: #3498db; }
+        #progress-bar { width: 0%; height: 100%; background: var(--blue); box-shadow: 0 0 10px var(--blue); }
         
-        #menu, #game-over {
+        /* Стили меню */
+        .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 20, 30, 0.95); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 100; color: white;
-            text-align: center; padding: 20px; box-sizing: border-box;
+            background: radial-gradient(circle at center, rgba(44, 62, 80, 0.95), rgba(20, 30, 48, 1));
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 100; padding: 20px; box-sizing: border-box;
         }
-        #game-over { display: none; }
 
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        button {
-            padding: 15px; font-size: 16px; border: none;
-            border-radius: 12px; background: #3498db; color: white; 
-            cursor: pointer; transition: transform 0.1s;
+        .menu-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-        button:active { transform: scale(0.95); }
-        button.hard { background: #e67e22; }
-        button.super { background: #e74c3c; }
-        button.reverse { background: #f1c40f; color: #000; font-weight: bold; grid-column: span 2; }
+
+        h1 { margin: 0 0 10px 0; font-size: 28px; letter-spacing: 2px; }
+        p { opacity: 0.7; font-size: 14px; margin-bottom: 25px; }
+
+        .btn-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
-        .moisture-label { font-weight: bold; }
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:active { transform: scale(0.96); }
+
+        .btn-easy { background: var(--blue); }
+        .btn-hard { background: var(--orange); }
+        .btn-super { background: var(--red); }
+        .btn-reverse { background: var(--yellow); color: #2c3e50; }
+
+        .authors {
+            margin-top: 30px;
+            font-size: 12px;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        #moisture { font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
 
 <div id="ui">
     <div id="progress-container"><div id="progress-bar"></div></div>
-    <div id="status"><span id="label">Влажность</span>: <span id="moisture" class="moisture-label">100%</span></div>
+    <div id="status"><span id="label">Влажность</span>: <span id="moisture">100%</span></div>
 </div>
 
-<div id="menu">
-    <h1>Капелька лови</h1>
-    <p>Выберите режим игры:</p>
-    <div class="btn-group">
-        <button onclick="startGame('easy')">Легко</button>
-        <button class="hard" onclick="startGame('hard')">Сложно</button>
-        <button class="super" onclick="startGame('super')">S-Сложно</button>
-        <button class="reverse" onclick="startGame('reverse')">РЕЖИМ: ГУБКИ (ОБЪЕЗЖАЙ!)</button>
+<!-- ГЛАВНОЕ МЕНЮ -->
+<div id="menu" class="overlay">
+    <div class="menu-card">
+        <h1>КАПЕЛЬКА</h1>
+        <p>Не дай ей высохнуть</p>
+        
+        <div class="btn-list">
+            <button class="btn-easy" onclick="startGame('easy')">Легко</button>
+            <button class="btn-hard" onclick="startGame('hard')">Сложно</button>
+            <button class="btn-super" onclick="startGame('super')">Супер сложно</button>
+            <button class="btn-reverse" onclick="startGame('reverse')">Режим Губки</button>
+        </div>
+
+        <div class="authors">
+            Идея: Полина Капранова
+        </div>
     </div>
 </div>
 
-<div id="game-over">
-    <h1 id="resTitle">Игра окончена</h1>
-    <p id="resText"></p>
-    <button onclick="showMenu()">В меню</button>
+<!-- ЭКРАН КОНЦА ИГРЫ -->
+<div id="game-over" class="overlay" style="display:none;">
+    <div class="menu-card">
+        <h1 id="resTitle">КОНЕЦ</h1>
+        <p id="resText"></p>
+        <button class="btn-easy" onclick="showMenu()">В меню</button>
+    </div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -79,23 +133,25 @@ const menu = document.getElementById('menu');
 const gameOverScreen = document.getElementById('game-over');
 
 let gameActive = false;
-let gameMode = 'easy'; // easy, hard, super, reverse
+let gameMode = 'easy';
 let worldY = 0;
 let totalLength = 0; 
 let currentDryingRate = 0;
 
 let player = {
-    x: 0, y: 150, r: 25, targetX: 0, maxR: 50, minR: 6
+    x: 0, y: 150, r: 25, targetX: 0, 
+    maxR: 50, 
+    minR: 5 // Минимальный визуальный размер
 };
 
 let staticDrops = [];
-let obstacles = []; // Для губок
+let obstacles = [];
 let trailPoints = [];
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    totalLength = canvas.height * 12; // 12 экранов
+    totalLength = canvas.height * 12; 
 }
 window.addEventListener('resize', resize);
 resize();
@@ -112,21 +168,24 @@ function startGame(mode) {
     gameOverScreen.style.display = 'none';
     
     worldY = 0;
-    player.r = 25;
-    player.x = canvas.width / 2;
-    player.targetX = player.x;
     staticDrops = [];
     obstacles = [];
     trailPoints = [];
-
-    uiLabel.innerText = (mode === 'reverse') ? "Целостность" : "Влажность";
+    
+    player.x = canvas.width / 2;
+    player.targetX = player.x;
 
     if (mode === 'reverse') {
-        currentDryingRate = 0; // В режиме губок не сохнем
-        spawnItems(150, 'sponges');
+        player.r = 12; // В режиме губки капля маленькая
+        uiLabel.innerText = "Статус";
+        moistureText.innerText = "ОК";
+        currentDryingRate = 0;
+        spawnItems(140, 'sponges');
     } else {
-        let counts = { 'easy': 220, 'hard': 110, 'super': 70 };
-        let rates = { 'easy': 0.06, 'hard': 0.11, 'super': 0.18 };
+        player.r = 25; // Обычный старт
+        uiLabel.innerText = "Влажность";
+        let counts = { 'easy': 220, 'hard': 110, 'super': 75 };
+        let rates = { 'easy': 0.05, 'hard': 0.09, 'super': 0.15 };
         currentDryingRate = rates[mode];
         spawnItems(counts[mode], 'drops');
     }
@@ -138,11 +197,11 @@ function startGame(mode) {
 function spawnItems(count, type) {
     for (let i = 0; i < count; i++) {
         let item = {
-            x: Math.random() * (canvas.width - 60) + 30,
-            y: Math.random() * (totalLength - 500) + 400,
-            w: 40 + Math.random() * 40, // Для губок
-            h: 20 + Math.random() * 20, // Для губок
-            r: 8 + Math.random() * 12,  // Для капель
+            x: Math.random() * (canvas.width - 70) + 35,
+            y: Math.random() * (totalLength - 600) + 400,
+            w: 60 + Math.random() * 40, 
+            h: 30 + Math.random() * 20,
+            r: 8 + Math.random() * 12,
             collected: false
         };
         if (type === 'drops') staticDrops.push(item);
@@ -153,72 +212,80 @@ function spawnItems(count, type) {
 function finishGame(win, reason) {
     gameActive = false;
     gameOverScreen.style.display = 'flex';
-    document.getElementById('resTitle').innerText = win ? "Победа! 🎉" : "Поражение";
+    document.getElementById('resTitle').innerText = win ? "ПОБЕДА!" : "УПС...";
     document.getElementById('resText').innerText = reason;
 }
 
 // Управление
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') player.targetX -= 50;
-    if (e.key === 'ArrowRight') player.targetX += 50;
-});
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     player.targetX = e.touches[0].clientX;
 }, {passive: false});
+
 canvas.addEventListener('mousemove', (e) => {
     if (e.buttons === 1) player.targetX = e.clientX;
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') player.targetX -= 50;
+    if (e.key === 'ArrowRight') player.targetX += 50;
 });
 
 function update() {
     if (!gameActive) return;
 
-    worldY += 3.0; // Скорость скролла
+    worldY += 3.2; 
     player.x += (player.targetX - player.x) * 0.15;
     player.x = Math.max(player.r, Math.min(canvas.width - player.r, player.x));
 
     // Логика высыхания
     if (gameMode !== 'reverse') {
-        player.r -= (currentDryingRate * (player.r / 20)); 
-        if (player.r < player.minR) return finishGame(false, "Вы высохли на солнце...");
+        // Уменьшаем радиус
+        player.r -= (currentDryingRate * (player.r / 25)); 
+        
+        // Расчет процента для UI: (текущий - мин) / (старт - мин)
+        // Чтобы 0% было ровно в момент исчезновения
+        let displayPct = Math.max(0, Math.round(((player.r - player.minR) / (25 - player.minR)) * 100));
+        moistureText.innerText = displayPct + "%";
+        moistureText.style.color = displayPct < 25 ? "var(--red)" : "white";
+
+        if (player.r <= player.minR) {
+            return finishGame(false, "Капля полностью высохла...");
+        }
     }
 
     // След
     if (Math.round(worldY) % 2 === 0) {
         trailPoints.push({x: player.x, y: player.y + worldY, r: player.r});
     }
-    if (trailPoints.length > 400) trailPoints.shift();
+    if (trailPoints.length > 300) trailPoints.shift();
 
-    // Коллизии с каплями
+    // Сбор капель
     staticDrops.forEach(drop => {
         if (!drop.collected) {
             let dist = Math.hypot(player.x - drop.x, (player.y + worldY) - drop.y);
             if (dist < player.r + drop.r) {
                 drop.collected = true;
-                player.r = Math.min(player.maxR, player.r + drop.r * 0.5);
+                player.r = Math.min(player.maxR, player.r + drop.r * 0.6);
             }
         }
     });
 
-    // Коллизии с губками (в режиме reverse)
+    // Столкновение с губками
     if (gameMode === 'reverse') {
         obstacles.forEach(o => {
             let sY = o.y - worldY;
-            // Простая проверка прямоугольник-круг
-            if (player.x + player.r > o.x && player.x - player.r < o.x + o.w &&
-                player.y + player.r > sY && player.y - player.r < sY + o.h) {
-                finishGame(false, "Губка впитала вашу каплю!");
+            if (player.x + player.r*0.8 > o.x && player.x - player.r*0.8 < o.x + o.w &&
+                player.y + player.r*0.8 > sY && player.y - player.r*0.8 < sY + o.h) {
+                finishGame(false, "Губка впитала каплю!");
             }
         });
     }
 
-    // UI
-    let progress = (worldY / totalLength) * 100;
-    progressBar.style.width = progress + '%';
-    let moisture = Math.round((player.r / 25) * 100);
-    moistureText.innerText = (gameMode === 'reverse') ? "ОК" : moisture + '%';
+    // Прогресс
+    progressBar.style.width = (worldY / totalLength * 100) + '%';
 
-    if (worldY >= totalLength) finishGame(true, "Вы дошли до конца маршрута!");
+    if (worldY >= totalLength) finishGame(true, "Вы достигли края стекла!");
 
     draw();
     requestAnimationFrame(update);
@@ -227,34 +294,40 @@ function update() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Рисуем след
-    ctx.beginPath();
+    // След
+    ctx.lineCap = 'round';
     for (let i = 1; i < trailPoints.length; i++) {
         let p1 = trailPoints[i-1], p2 = trailPoints[i];
         let sY1 = p1.y - worldY, sY2 = p2.y - worldY;
         if (sY2 > -20 && sY1 < canvas.height + 20) {
-            ctx.lineWidth = p2.r * 1.5;
-            ctx.strokeStyle = `rgba(173, 216, 230, 0.15)`;
+            ctx.lineWidth = p2.r * 1.4;
+            ctx.strokeStyle = `rgba(173, 216, 230, 0.12)`;
             ctx.beginPath(); ctx.moveTo(p1.x, sY1); ctx.lineTo(p2.x, sY2); ctx.stroke();
         }
     }
 
-    // Рисуем губки
+    // Губки
     if (gameMode === 'reverse') {
         obstacles.forEach(o => {
             let sY = o.y - worldY;
             if (sY > -100 && sY < canvas.height + 100) {
+                // Тело губки
                 ctx.fillStyle = '#f1c40f';
+                ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(0,0,0,0.2)';
                 ctx.fillRect(o.x, sY, o.w, o.h);
-                // Поры губки
-                ctx.fillStyle = 'rgba(0,0,0,0.1)';
-                ctx.fillRect(o.x + 5, sY + 5, 5, 5);
-                ctx.fillRect(o.x + 20, sY + 12, 5, 5);
+                // Поры
+                ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                ctx.beginPath();
+                ctx.arc(o.x + 10, sY + 10, 3, 0, 7);
+                ctx.arc(o.x + o.w - 15, sY + 15, 4, 0, 7);
+                ctx.arc(o.x + o.w/2, sY + o.h - 10, 3, 0, 7);
+                ctx.fill();
+                ctx.shadowBlur = 0;
             }
         });
     }
 
-    // Рисуем капли
+    // Статичные капли
     staticDrops.forEach(drop => {
         let sY = drop.y - worldY;
         if (!drop.collected && sY > -50 && sY < canvas.height + 50) {
